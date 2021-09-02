@@ -1,0 +1,463 @@
+getgenv().collectBodyToggle = false
+getgenv().noCD = false
+getgenv().arataRegen = false
+getgenv().arataGodmode = false
+
+function autoEat()
+    spawn(function()
+        while wait() do
+            if not getgenv().collectBodyToggle then break end
+            for i,v in pairs(game:GetService("Workspace"):GetDescendants()) do
+                if v.Name == "ClickDetector" then if v.Parent == game:GetService("Workspace")[" "] then
+                        fireclickdetector(v, nill, 0)
+                        wait(0.1)
+                        fireclickdetector(v, nill, 1)
+                        
+                    end
+                end
+            end
+        end
+    end)
+end 
+
+
+function doCD()
+    spawn(function()
+        while getgenv().noCD == true do
+            game:GetService("Workspace").CountChriz.cd:ClearAllChildren()
+           wait()
+          -- repeat -- to do later
+        end
+    end)
+end
+
+function toggleArataGod()
+    spawn(function()
+        while getgenv().arataGodmode == true do
+            game:GetService("Workspace").CountChriz.arataHP:Destroy()
+           wait()
+         --  repeat -- to do later
+        end
+    end)
+end
+
+
+
+
+
+function toggleArataRegen()
+    spawn(function()
+        while getgenv().arataRegen == true do
+            local args = {
+                [1] = "InputBegan",
+                [2] = "K"
+            }
+            game:GetService("ReplicatedStorage").events.re:FireServer(unpack(args))
+           wait()
+        end
+    end)
+end 
+
+--[[function getCurrentPlayerPOS()
+    local plyr = game.Players.LocalPlayer;
+    if plyr.Character then
+        return plyr.Character.HumannoidRootPart.Position;
+    end
+        return false;
+
+end
+
+function teleportTo(placeCFrame)
+    local plyr = game.Players.LocalPlayer;
+    if plyr.Character then
+        plyr.Character.HumanoidRootPart.CFrame = placeCFrame;
+    end
+end
+
+function teleportShop(shop)
+    if game:GetService("Workspace").Shops:FindFirstChild(shop) then
+        teleportTo(game:GetService("Workspace").Shops[shop].Teleport.CFrame)
+    end
+end --]]
+
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/AikaV3rm/UiLib/master/Lib.lua')))()
+
+local w = library:CreateWindow("Project Ghoul")
+
+local a = w:CreateFolder("Combat") 
+
+local b = w:CreateFolder("Auto Farm") 
+
+local e = w:CreateFolder("Teleport - Map") 
+
+local f = w:CreateFolder("Teleport - Safezone") 
+
+local g = w:CreateFolder("Teleport - Bases") 
+
+local h = w:CreateFolder("Shop Menus'")
+
+local i = w:CreateFolder("Player Teleport")
+
+local c = w:CreateFolder("Self Destruct")
+
+local z = w:CreateFolder("Credits - Cage#6969")
+
+c:DestroyGui()
+
+
+local Kinput = "Q"
+local width = "500"
+local AutoFarmB = false
+local npc = nil
+local quest
+local gameQuests = game.Workspace.dialogues
+local player = game.Players.LocalPlayer
+local boolv = false
+local noQuest = true
+----------------------------------------------------------------------------------------------------------------
+
+b:Box("Custom Input [Attack Key]","string",function(value) -- "number" or "string"
+
+    if value == "Q" or value == "C" or value == "V" or value == "F" then
+Kinput = value
+   end 
+end)
+
+
+b:Box("Hitbox Width","number",function(value) -- "number" or "string"
+width = value
+end)
+
+b:Dropdown("Mob Quests",{"Citizens","CCGs","Ghouls", "Eto"},true,function(mob) --Replace the Dropdown name with the selected one(A,B,C)
+npc = mob
+end)
+
+--------------------------------------------------------------------------------------- Baseplate
+b:Button("MobFarm [L Toggle]",function()
+    game.Players.LocalPlayer:GetMouse().KeyDown:connect(function(key)
+    if (key=="l") then
+        boolv = not boolv
+        print(boolv)
+        repeat 
+            wait(2)
+             if npc ~= nil then
+            if npc == "Citizens" then
+            quest = "Quest0"
+            elseif npc == "CCGs" then
+            quest = "Quest1"
+            elseif npc == "Ghouls" then
+            quest = "Quest2"
+            elseif npc == "Eto" then
+            quest = "Quest3"
+            end
+            else  quest = "no"
+            end
+
+            for i,v in pairs(workspace.mobs:GetChildren()) do
+
+------------------------------------------------------------------------------------------------------- Quest Getter
+if gameQuests:FindFirstChild(quest) and player.data.notSavable.quest.questName.Value == "notTaken" then
+--------------------------------------------------
+                    fireclickdetector(gameQuests[quest].clicky.ClickDetector)
+                    wait()
+                    if player.PlayerGui.Dialogue.MainFrame.Visible == true and isrbxactive() then
+                    repeat
+                        if boolv == false then break end
+                        mousemoveabs(player.PlayerGui.Dialogue.MainFrame.SkipButton.AbsolutePosition.X + (player.PlayerGui.Dialogue.MainFrame.SkipButton.AbsolutePosition.X * 1/10), player.PlayerGui.Dialogue.MainFrame.SkipButton.AbsolutePosition.Y +(player.PlayerGui.Dialogue.MainFrame.SkipButton.AbsolutePosition.Y * 1/10))
+                        mouse1click()
+                        wait()
+                    until player.PlayerGui.Dialogue.MainFrame.Visible == false 
+                    end
+                    noQuest = false
+                    wait(2)
+end
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- Auto Farm
+            if  noQuest == false then
+                if v:IsA("Model") and pcall(function() return require(v.mob_settings),v.Humanoid end) and require(v.mob_settings).questNeeded == player.data.notSavable.quest.questName.Value and v.Humanoid.Health > 0 then
+                repeat
+                    if boolv == false  then break end
+                        pcall(function()
+                        v.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame*CFrame.new(0,0,-2)
+                        v.HumanoidRootPart.Size = Vector3.new(width,2,width)
+                        game:GetService("TweenService"):Create(player.Character.HumanoidRootPart,TweenInfo.new(1, Enum.EasingStyle.Linear), v.HumanoidRootPart.Position):Play()
+                    end)
+                    wait()       
+                    game.ReplicatedStorage.events.re:FireServer("InputBegan", Kinput)
+                    game.ReplicatedStorage.events.re:FireServer("InputEnded", Kinput)
+                until not pcall(function() return v.Humanoid,v.HumanoidRootPart end) or v.Humanoid.Health <= 0 
+
+                    for i,rags in pairs(workspace:GetChildren()) do
+                        if rags:IsA("Model") and rags:FindFirstChild("ClickDetector") then
+                            fireclickdetector(rags.ClickDetector)
+                    end
+                end
+                end
+                
+            elseif noQuest then
+                    if v:IsA("Model") and pcall(function() return require(v.mob_settings),v.Humanoid end) and v.Humanoid.Health > 0 then
+
+                        repeat
+                            if boolv == false  then break end
+                                pcall(function()
+                                    v.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame*CFrame.new(0,0,-2)
+                                    v.HumanoidRootPart.Size = Vector3.new(width,2,width)
+                                    game:GetService("TweenService"):Create(player.Character.HumanoidRootPart,TweenInfo.new(1, Enum.EasingStyle.Linear), v.HumanoidRootPart.Position):Play()
+                                end)
+                                wait()       
+                                game.ReplicatedStorage.events.re:FireServer("InputBegan", Kinput)
+                                game.ReplicatedStorage.events.re:FireServer("InputEnded", Kinput)
+                        until not pcall(function() return v.Humanoid,v.HumanoidRootPart end) or v.Humanoid.Health <= 0 
+                            for i,rags in pairs(workspace:GetChildren()) do
+                                if rags:IsA("Model") and rags:FindFirstChild("ClickDetector") then
+                                    fireclickdetector(rags.ClickDetector)
+                            end
+                        end
+                    end
+                end
+            end
+until boolv == false 
+        end
+    end)
+end)
+-----------------------------------------------------------------------------------------------
+
+b:Toggle("Auto Eat",function(bool)
+    getgenv().collectBodyToggle = bool
+    print("Auto Eat is", bool)
+    if bool then
+        autoEat()
+    end
+end)
+------------------------------------------------------------------------------------------------
+b:Button("Auto AFK (Click Once)",function()
+    local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+   wait(1)
+   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+end)
+------------------------------------------------------------------------------------------------
+a:Toggle("No Attack CD",function(bool)
+    getgenv().noCD = bool
+    print('No CD is ', bool);
+    if bool then
+        doCD();
+    end
+end)
+
+a:Label("CCG Only",{
+    TextSize = 15; -- Self Explaining
+    TextColor = Color3.fromRGB(255,255,255); -- Self Explaining
+    BgColor = Color3.fromRGB(69,69,69); -- Self Explaining
+    
+}) 
+
+a:Toggle("Auto Arata Regen",function(bool)
+    getgenv().doArataRegen = bool
+    print('Arata Regen is ', bool);
+    if bool then
+        toggleArataRegen(); -- maybe wrong
+    end
+end)
+
+a:Toggle("Arata Godmode",function(bool)
+    getgenv().arataGodmode = bool
+    print('Arata Godmode is ', bool);
+    if bool then
+        toggleArataGod();
+    end
+end)
+------------------------------------------------------------------------------------------------
+e:Dropdown("Teleport",{"Wrecked Parking Lot","Parking Lot","Park","Construction"},true,function(map) --true/false, replaces the current title "Dropdown" with the option that t
+    if map == "Wrecked Parking Lot" then 
+        game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2052.59448, 85.5999603, -1051.09961, -1, 0, 0, 0, 1, 0, 0, 0, -1))
+end)
+
+
+e:Button("Wrecked Parking Lot",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2052.59448, 85.5999603, -1051.09961, -1, 0, 0, 0, 1, 0, 0, 0, -1))
+end)
+
+e:Button("Parking Lot",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2111.60107, 84.6499939, -742.598511, 1, 0, 0, 0, 1, 0, 0, 0, 1))
+end)
+
+e:Button("Park",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-3134.66528, 88.826416, -948.046509, 0.965929627, 0, 0.258804798, 0, 1, 0, -0.258804798, 0, 0.965929627))
+end)
+
+e:Button("Construction",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-1955.91736, 183.599976, -1672.71753, 0, 0, -1, 0, 1, 0, 1, 0, 0))
+end)
+----------------------------------------------------------------------------------
+f:Button("Clothes Store",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2560.82446, 89.5870895, -1146.39673, -0.662358999, -0.00922179502, -0.749129772, -0.00216040877, 0.999943614, -0.010399146, 0.749183416, -0.00526954327, -0.662341654))
+end)
+
+f:Button("Food Store",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2765.25342, 89.5872421, -742.774414, -0.457022578, 0.000712344714, -0.889454782, -0.000143984915, 0.999999583, 0.000874858699, 0.88945508, 0.000527912285, -0.457022309))
+end)
+
+f:Button("Hair Store",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2768.15454, 89.5872421, -1402.28528, 0.786967218, -0.000405532774, 0.616994679, -0.000441249053, 0.999999166, 0.00122008566, -0.616994619, -0.00123242685, 0.786966443))
+end)
+
+f:Button("Mask Shop",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2577.36597, 89.5468826, -485.117096, 0.994269967, 0.000590186741, -0.106896974, -0.00254159095, 0.99983263, -0.0181196518, 0.106868394, 0.0182875134, 0.994104981))
+end)
+
+f:Button("Quinque/Arata",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-3016.75146, 89.3865814, -1433.93567, 0.445684403, 0.0419831425, 0.894205093, -0.000931309653, 0.998920918, -0.0464353897, -0.895189643, 0.0198627505, 0.445242584))
+end)
+
+f:Button("CCG",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-3227.17529, 94.3857803, -1737.7926, 0.902092695, -0.0148767419, -0.431285977, -0.00317117688, 0.999150097, -0.0410975479, 0.431530833, 0.0384414792, 0.901278734))
+end)
+
+f:Button("Cafe",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2719.3877, 98.0999222, -355.112701, 0, 0, 1, 0, 1, -0, -1, 0, 0))
+end)
+---------------------------------------------------------------------------------
+
+g:Button("Food Base",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2472.48999, 89.3859024, -722.689209, -0.399056911, 0.0579876862, 0.91509068, -0.00150853745, 0.997955382, -0.0638965219, -0.916924894, -0.026878804, -0.398153543))
+end)
+
+g:Button("CCG Base",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-3215.23462, 89.5871811, -354.64743, 0.998770833, 0.00199227291, 0.0495267287, -0.00175403268, 0.999986708, -0.00485348934, -0.049535729, 0.00476065278, 0.998760998))
+end)
+
+g:Button("Cafe Base",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2463.7749, 89.5851898, -233.38765, 0.100371957, 0.0716171339, 0.992369115, -0.00235744496, 0.997420371, -0.0717432275, -0.994947135, 0.00486155553, 0.100281872))
+end)
+
+g:Button("Parking Base",function()
+    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-2088.84741, 89.3859787, -481.972992, 0.366636217, -0.057398662, -0.928592145, -0.00143287168, 0.998059034, -0.0622583404, 0.930363357, 0.0241567083, 0.365842283))
+end)
+-----------------------------------------------------------------------------------------------------------------
+h:Button("Food Shop",function()
+    for i,v in pairs(game:GetService("Workspace").Shops["Food Store"]["Food Merchant"]:GetDescendants()) do
+        if v.Name == "ClickDetector" then 
+            fireclickdetector(v)
+       end
+    end
+end)
+
+h:Button("Hair Shop",function()
+    for i,v in pairs(game:GetService("Workspace").Shops.Salon["Hair Merchant"]:GetDescendants()) do
+        if v.Name == "ClickDetector" then 
+            fireclickdetector(v)
+       end
+    end
+end)
+
+h:Button("Clothes Shop",function()
+    for i,v in pairs(game:GetService("Workspace").Shops["Clothing Store"]["Cloths Merchant"]:GetDescendants()) do
+        if v.Name == "ClickDetector" then 
+            fireclickdetector(v)
+       end
+    end
+end)
+
+h:Button("Mask Shop",function()
+    for i,v in pairs(game:GetService("Workspace").Ghoul["Mask Shop Interior"].maskghoul:GetDescendants()) do
+        if v.Name == "ClickDetector" then 
+            fireclickdetector(v)
+       end
+    end
+end)
+
+h:Label("CGG ONLY",{
+    TextSize = 15; -- Self Explaining
+    TextColor = Color3.fromRGB(255,255,255); -- Self Explaining
+    BgColor = Color3.fromRGB(69,69,69); -- Self Explaining
+    
+}) 
+
+h:Button("Arata Shop",function()
+    for i,v in pairs(game:GetService("Workspace").CCG["CCG Crafting Building"].ccgarata:GetDescendants()) do
+        if v.Name == "ClickDetector" then 
+            fireclickdetector(v)
+       end
+    end
+end)
+
+h:Button("Quinque Shop",function()
+    for i,v in pairs(game:GetService("Workspace").CCG["CCG Crafting Building"].ccgquinque:GetDescendants()) do
+        if v.Name == "ClickDetector" then 
+            fireclickdetector(v)
+       end
+    end
+end)
+
+-------------------------------------------------------------
+_players = {}
+_playerNames = {}
+
+local function RefreshPlayers()
+  _players = {}
+  _playerNames = {}
+  j = 1;
+  for i,rags in pairs(workspace:GetChildren()) do
+    if rags:IsA("Model") and rags:FindFirstChild("Client") then
+      _players[j] = rags;
+      _playerNames[j] = tostring(rags.Name)
+      j = (j + 1)
+    end
+  end
+end
+
+RefreshPlayers()
+_playerDropdown = i:Dropdown("Dropdown",_playerNames,true,function(playerName)
+  for i in pairs(_playerNames) do
+    if(_playerNames[i] == playerName) then
+      game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(_players[i].Head.Position)
+      break
+    end
+  end
+end)
+
+local Players = game:GetService("Players")
+Players.PlayerAdded:Connect(function(player)
+  RefreshPlayers()
+  print(player.Name .. " joined the game!")
+  _playerDropdown.Refresh(_playerDropdown, _playerNames)
+end)
+Players.PlayerRemoving:Connect(function(player)
+  RefreshPlayers()
+  print(player.Name .. " left the game!")
+  _playerDropdown.Refresh(_playerDropdown, _playerNames)
+end)
+
+
+--[[
+local selectedShop;
+
+e:Dropdown("Shop",{"Salon", "Food Store", "Clothing Store", "Customization"},true,function(value) --true/false, replaces the current title "Dropdown" with the option that t
+    selectedShop = value;
+    print(value)
+
+end)
+
+e:Button("Teleport Selected",function()
+    if selectedShop then
+        teleportWorld(selectedShop)
+    end
+end)
+--]]
+
+z:Label("Changelog \n30/08/21",{
+    TextSize = 15; -- Self Explaining
+    TextColor = Color3.fromRGB(255,255,255); -- Self Explaining
+    BgColor = Color3.fromRGB(69,69,69); -- Self Explaining
+    
+}) 
+
+z:Label("Mobfarm is being worked on",{
+    TextSize = 15; -- Self Explaining
+    TextColor = Color3.fromRGB(255,255,255); -- Self Explaining
+    BgColor = Color3.fromRGB(69,69,69); -- Self Explaining
+    
+})
